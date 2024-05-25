@@ -11,12 +11,13 @@ export const setupServer = () => {
     pino({
       transport: {
         target: 'pino-pretty',
+        options: { colorize: true },
       },
     }),
   );
   app.use(cors());
 
-  app.get('/contacts', async (req, res, next) => {
+  app.get('/contacts', async (req, res) => {
     try {
       const contacts = await getAllContacts();
       res.json({
@@ -32,7 +33,6 @@ export const setupServer = () => {
   app.get('/contacts/:contactId', async (req, res) => {
     const id = req.params.contactId;
     const contact = await getContactById(id);
-
     if (!contact) {
       return res.status(404).json({
         status: 404,
@@ -47,7 +47,7 @@ export const setupServer = () => {
     }
   });
 
-  app.use('*', (req, res, next) => {
+  app.use('*', (req, res) => {
     res.status(404).json({
       message: 'Not found',
     });
