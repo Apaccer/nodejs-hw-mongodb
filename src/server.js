@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utils/env.js';
@@ -33,17 +34,19 @@ export const setupServer = () => {
   app.get('/contacts/:contactId', async (req, res) => {
     try {
       const id = req.params.contactId;
-      const contact = await getContactById(id);
-      if (!contact) {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const contact = await getContactById(id);
+        if (contact) {
+          res.json({
+            status: 200,
+            message: `Successfully found contact with id ${id}!`,
+            data: contact,
+          });
+        }
+      } else {
         return res.status(404).json({
           status: 404,
           message: `Contact with id ${id} not found!`,
-        });
-      } else {
-        res.json({
-          status: 200,
-          message: `Successfully found contact with id ${id}!`,
-          data: contact,
         });
       }
     } catch (error) {
