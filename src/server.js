@@ -42,6 +42,11 @@ export const setupServer = () => {
             message: `Successfully found contact with id ${id}!`,
             data: contact,
           });
+        } else {
+          return res.status(404).json({
+            status: 404,
+            message: `Contact with id ${id} not found!`,
+          });
         }
       } else {
         return res.status(404).json({
