@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { env } from '../utils/env.js';
 
 export const initMongoConnection = async () => {
-  const connectionLink = `mongodb+srv://${env('MONGODB_USER')}1:${env(
+  const connectionLink = `mongodb+srv://${env('MONGODB_USER')}:${env(
     'MONGODB_PASSWORD',
   )}@${env('MONGODB_URL')}/${env(
     'MONGODB_DB',
