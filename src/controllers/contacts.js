@@ -9,9 +9,12 @@ import {
   updateContact,
   deleteContact,
 } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 export const getAllContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  console.log(`huj ${req}`);
+  const { page, perPage } = parsePaginationParams(req.query);
+  const contacts = await getAllContacts({ page, perPage });
   res.json({
     status: 200,
     message: 'Successfully found contacts!',
