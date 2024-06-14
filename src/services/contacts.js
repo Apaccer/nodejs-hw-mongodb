@@ -1,7 +1,38 @@
+import { SORT_ORDER } from '../constants/constants.js';
 import { Contacts } from '../db/Contact.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getAllContacts = async () => {
-  return await Contacts.find();
+export const getAllContacts = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = 'name',
+  sortOrder = SORT_ORDER.ASC,
+  filter = {},
+}) => {
+  const limit = perPage;
+  const skip = perPage * (page - 1);
+  const contactsQuery = Contacts.find();
+
+  if (filter.type) {
+    contactsQuery.where('contactType').equals(filter.type);
+  }
+  if (typeof filter.isFavourite !== 'undefined') {
+    console.log('kuku');
+    contactsQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+
+  const [contactsCount, contacts] = await Promise.all([
+    Contacts.find().merge(contactsQuery).countDocuments(),
+    contactsQuery
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .exec(),
+  ]);
+
+  const paginationData = calculatePaginationData(contactsCount, page, perPage);
+
+  return { data: contacts, ...paginationData };
 };
 
 export const getContactById = async (id) => {
