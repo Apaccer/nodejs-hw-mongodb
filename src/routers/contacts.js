@@ -11,24 +11,24 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { createContactSchema } from '../validation/createContactSchema.js';
 import { updateContactSchema } from '../validation/updateContactSchema.js';
 
-const router = Router();
+const contactRouter = Router();
 
-router.get('/contacts', ctrlWrapper(getAllContactsController));
+contactRouter.get('/', ctrlWrapper(getAllContactsController));
 
-router.get('/contacts/:contactId', ctrlWrapper(getContactByIdController));
+contactRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
-router.post(
-  '/contacts/',
+contactRouter.post(
+  '/',
   validateBody(createContactSchema),
   ctrlWrapper(createContsctController),
 );
 
-router.patch(
-  '/contacts/:contactId',
+contactRouter.patch(
+  '/:contactId',
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
 
-router.delete('/contacts/:contactId', ctrlWrapper(deleteContactController));
+contactRouter.delete('/:contactId', ctrlWrapper(deleteContactController));
 
-export default router;
+export default contactRouter;
