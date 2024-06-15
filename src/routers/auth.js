@@ -9,7 +9,11 @@ import {
   registerUserController,
 } from '../controllers/auth.js';
 import { loginUserSchema } from '../validation/loginUserSchema.js';
+import { authenticate } from '../middlewares/authenticate.js';
 const authRouter = Router();
+
+authRouter.use('/logout', authenticate);
+authRouter.use('/refresh', authenticate);
 
 authRouter.post(
   '/register',

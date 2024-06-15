@@ -52,9 +52,10 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
-export const logoutUser = async (sessionId) => {
+export const logoutUser = async ({ sessionId, sessionToken }) => {
   await Session.deleteOne({
     _id: sessionId,
+    refreshToken: sessionToken,
   });
 };
 

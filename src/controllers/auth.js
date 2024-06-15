@@ -40,9 +40,10 @@ export const loginUserController = async (req, res) => {
 };
 
 export const logoutController = async (req, res) => {
-  console.log(req.cookies.sessionId);
-  await logoutUser(req.cookies.sessionId);
-
+  await logoutUser({
+    sessionId: req.cookies.sessionId,
+    sessionToken: req.cookies.sessionToken,
+  });
   res.clearCookie('sessionId');
   res.clearCookie('sessionToken');
 
