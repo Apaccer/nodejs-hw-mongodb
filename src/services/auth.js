@@ -2,19 +2,18 @@ import createHttpError from 'http-errors';
 import { User } from '../db/User.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { randomBytes } from 'crypto';
 import { Session } from '../db/Session.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
 
 const createSession = () => {
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const refreshToken = crypto.randomBytes(30).toString('base64');
 
   return {
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    accessTokenValidUntil: Date.now() + FIFTEEN_MINUTES,
+    refreshTokenValidUntil: Date.now() + THIRTY_DAYS,
   };
 };
 
@@ -53,12 +52,16 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
-export const logoutUser = () => {};
+export const logoutUser = async (sessionId) => {
+  await Session.deleteOne({
+    _id: sessionId,
+  });
+};
 
-export const refreshSession = async ({ sessionId, sessionToken }) => {
+export const refreshSession = async ({ sessionId, refreshToken }) => {
   const session = await Session.findOne({
     _id: sessionId,
-    refreshToken: sessionToken,
+    refreshToken,
   });
 
   if (!session) {
