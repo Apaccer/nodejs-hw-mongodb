@@ -23,6 +23,7 @@ export const getAllContactsController = async (req, res) => {
     sortBy,
     sortOrder,
     filter,
+    userId: req.user._id,
   });
   res.json({
     status: 200,
@@ -33,7 +34,7 @@ export const getAllContactsController = async (req, res) => {
 export const getContactByIdController = async (req, res, next) => {
   const id = req.params.contactId;
   if (mongoose.Types.ObjectId.isValid(id)) {
-    const contact = await getContactById(id);
+    const contact = await getContactById(id, req.user._id);
     if (contact) {
       res.json({
         status: 200,
@@ -51,7 +52,7 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContsctController = async (req, res) => {
-  const contact = await createContact(req.body);
+  const contact = await createContact(req.body, req.user._id);
 
   res.status(201).json({
     status: 201,
@@ -63,7 +64,7 @@ export const createContsctController = async (req, res) => {
 export const patchContactController = async (req, res, next) => {
   const id = req.params.contactId;
   if (mongoose.Types.ObjectId.isValid(id)) {
-    const result = await updateContact(id, req.body);
+    const result = await updateContact(id, req.body, req.user._id);
     if (result) {
       res.json({
         status: 200,
@@ -83,7 +84,7 @@ export const patchContactController = async (req, res, next) => {
 export const deleteContactController = async (req, res, next) => {
   const id = req.params.contactId;
   if (mongoose.Types.ObjectId.isValid(id)) {
-    const contact = await deleteContact(id);
+    const contact = await deleteContact(id, req.user._id);
     if (contact) {
       res.status(204).send();
     } else {
