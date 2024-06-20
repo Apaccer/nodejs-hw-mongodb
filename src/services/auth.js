@@ -17,6 +17,7 @@ import {
 } from '../constants/constants.js';
 import { env } from '../utils/env.js';
 import { sendMail } from '../utils/sendMail.js';
+import { log } from 'console';
 
 const createSession = () => {
   const accessToken = crypto.randomBytes(30).toString('base64');
@@ -140,4 +141,27 @@ export const requestResetToken = async (email) => {
       'Failed to send the email, please try again later.',
     );
   }
+};
+
+export const resetPassword = async (payload) => {
+  let entries;
+
+  try {
+    entries = jwt.verify(payload.token, env(JWT_SECRET));
+  } catch (err) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await User.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  await User.updateOne({ _id: user._id }, { password: encryptedPassword });
 };

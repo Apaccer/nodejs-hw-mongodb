@@ -5,6 +5,7 @@ import {
   refreshSession,
   registerUser,
   requestResetToken,
+  resetPassword,
 } from '../services/auth.js';
 
 const setupSessionCookies = (res, session) => {
@@ -70,6 +71,15 @@ export const requestResetEmailController = async (req, res) => {
   await requestResetToken(req.body.email);
   res.json({
     message: 'Reset password email has been successfully sent.',
+    status: 200,
+    data: {},
+  });
+};
+
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+  res.json({
+    message: 'Password has been successfully reset.',
     status: 200,
     data: {},
   });
