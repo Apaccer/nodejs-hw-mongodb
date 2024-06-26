@@ -12,6 +12,10 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { env } from '../utils/env.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { CLOUDINARY } from '../constants/constants.js';
 
 export const getAllContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -52,7 +56,20 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContsctController = async (req, res) => {
-  const contact = await createContact(req.body, req.user._id);
+  const { body, file } = req;
+  let photoUrl;
+
+  if (file) {
+    if (env(CLOUDINARY.ENABLE_CLOUDINARY) === 'true') {
+      photoUrl = await saveFileToCloudinary(file);
+    } else {
+      photoUrl = await saveFileToUploadDir(file);
+    }
+  }
+  const contact = await createContact(
+    { ...body, photo: photoUrl },
+    req.user._id,
+  );
 
   res.status(201).json({
     status: 201,
@@ -63,8 +80,24 @@ export const createContsctController = async (req, res) => {
 
 export const patchContactController = async (req, res, next) => {
   const id = req.params.contactId;
+  const { body, file } = req;
+  let photoUrl;
+
+  if (file) {
+    if (env(CLOUDINARY.ENABLE_CLOUDINARY) === 'true') {
+      photoUrl = await saveFileToCloudinary(file);
+      console.log(true);
+    } else {
+      photoUrl = await saveFileToUploadDir(file);
+      console.log(false);
+    }
+  }
   if (mongoose.Types.ObjectId.isValid(id)) {
-    const result = await updateContact(id, req.body, req.user._id);
+    const result = await updateContact(
+      id,
+      { ...body, photo: photoUrl },
+      req.user._id,
+    );
     if (result) {
       res.json({
         status: 200,
