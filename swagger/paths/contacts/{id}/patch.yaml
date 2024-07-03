@@ -1,8 +1,8 @@
 tags:
   - Contacts
-summary: Create contact
-operationId: createContact
-description: 'Create a contact with payload'
+summary: Update contact
+operationId: updateContact
+description: 'Update a contact with payload'
 security:
   - bearerAuth: []
 requestBody:
@@ -12,17 +12,19 @@ requestBody:
         type: object
         required:
           - _id
-          - name
-          - phoneNumber
         properties:
+          _id:
+            description: "Contact's ID"
+            type: string
+            example: '60c72b2f4f1a256bdc3b3b9e'
           name:
-            description: "Contactt's name"
+            description: "Contact's name"
             type: string
             example: 'John Doe'
           phoneNumber:
-            description: "Contact's phoneNumber"
+            description: "Contact's phone number"
             type: number
-            example: 12
+            example: 1234567890
           email:
             description: "Contact's email"
             type: string
@@ -32,16 +34,23 @@ requestBody:
             type: boolean
             example: false
           contactType:
-            description: 'Whether is contact on duty'
+            description: 'Contact type'
             type: string
             enum: ['work', 'home', 'personal']
           photo:
             description: "Contact's photo"
             type: string
             format: binary
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '65ca67e7ae7f10c88b598384'
 responses:
-  '201':
-    description: Creates a contact
+  '200':
+    description: Updates a contact
     content:
       application/json:
         schema:
@@ -56,9 +65,9 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully created a contact!
+              example: Successfully updated a contact!
             data:
               type: object
-              $ref: '../../components/schemas/contact.yaml'
+              $ref: '../../../components/schemas/contact.yaml'
   '401':
-    $ref: '../../components/responses/401.yaml'
+    $ref: '../../../components/responses/401.yaml'
