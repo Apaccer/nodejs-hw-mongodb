@@ -10,13 +10,7 @@ requestBody:
     multipart/form-data:
       schema:
         type: object
-        required:
-          - _id
         properties:
-          _id:
-            description: "Contact's ID"
-            type: string
-            example: '60c72b2f4f1a256bdc3b3b9e'
           name:
             description: "Contact's name"
             type: string
